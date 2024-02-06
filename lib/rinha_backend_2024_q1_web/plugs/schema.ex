@@ -27,9 +27,9 @@ defmodule RinhaBackendWeb.Plugs.Schema do
 
           :error ->
             conn
-            |> put_status(:bad_request)
+            |> put_status(:unprocessable_entity)
             |> Phoenix.Controller.put_view(RinhaBackendWeb.ErrorJSON)
-            |> Phoenix.Controller.render("400.json")
+            |> Phoenix.Controller.render("422.json")
             |> halt()
         end
 
@@ -53,11 +53,12 @@ defmodule RinhaBackendWeb.Plugs.Schema do
   defp validar_parametros_transacao(conn) do
     body_params = conn.params
 
-    case Map.has_key?(body_params, "valor") do
+    case Map.has_key?(body_params, "valor") and is_integer(body_params["valor"]) do
       true ->
         case Map.has_key?(body_params, "tipo") and body_params["tipo"] in ["c", "d"] do
           true ->
-            case Map.has_key?(body_params, "descricao") do
+            case Map.has_key?(body_params, "descricao") and not is_nil(body_params["descricao"]) and
+                   String.length(body_params["descricao"]) in 1..10 do
               true -> :ok
               false -> :error
             end

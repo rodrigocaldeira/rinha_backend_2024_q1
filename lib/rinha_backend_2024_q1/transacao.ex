@@ -8,7 +8,7 @@ defmodule RinhaBackend.Transacao do
     field :descricao, :string
     belongs_to :cliente, RinhaBackend.Cliente
 
-    timestamps()
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false
@@ -17,5 +17,6 @@ defmodule RinhaBackend.Transacao do
     |> cast(attrs, [:valor, :tipo, :descricao, :cliente_id])
     |> validate_required([:valor, :tipo, :descricao, :cliente_id])
     |> validate_number(:valor, greater_than: 0)
+    |> validate_length(:descricao, min: 1, max: 10)
   end
 end

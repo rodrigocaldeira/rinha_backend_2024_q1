@@ -40,13 +40,7 @@ defmodule RinhaBackendWeb.ClienteController do
             |> render("404.json")
         end
 
-      {:error, :valor_invalido} ->
-        conn
-        |> put_status(:bad_request)
-        |> put_view(RinhaBackendWeb.ErrorJSON)
-        |> render("400.json")
-
-      {:error, :saldo_insuficiente} ->
+      {:error, :transacao_invalida} ->
         conn
         |> put_status(:unprocessable_entity)
         |> put_view(RinhaBackendWeb.ErrorJSON)

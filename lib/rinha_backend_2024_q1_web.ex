@@ -51,8 +51,7 @@ defmodule RinhaBackendWeb do
     quote do
       use Phoenix.VerifiedRoutes,
         endpoint: RinhaBackendWeb.Endpoint,
-        router: RinhaBackendWeb.Router,
-        statics: RinhaBackendWeb.static_paths()
+        router: RinhaBackendWeb.Router
     end
   end
 

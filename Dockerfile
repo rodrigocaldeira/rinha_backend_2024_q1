@@ -80,7 +80,7 @@ RUN chown nobody /app
 ENV MIX_ENV="prod"
 ENV SECRET_KEY_BASE="vnbnYw4N0WzDuQieEpv0tzaZCAGfNOzk/M+naf87PNX3yd2fM4COTizm3yVwwHh7"
 ENV DATABASE_URL="postgres://postgres:postgres@postgres:5432/rinha_backend"
-ENV POOL_SIZE=2
+ENV POOL_SIZE=10
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/rinha_backend_2024_q1 ./

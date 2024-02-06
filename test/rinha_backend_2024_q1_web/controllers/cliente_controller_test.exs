@@ -5,7 +5,7 @@ defmodule RinhaBackendWeb.ClienteControllerTest do
   alias RinhaBackend.Repo
 
   setup do
-    {:ok, cliente} = Repo.insert(%Cliente{id: 1, nome: "Fulano", limite: 1000})
+    {:ok, cliente} = Repo.insert(%Cliente{id: 6, nome: "Fulano", limite: 1000})
     {:ok, cliente: cliente}
   end
 
@@ -52,15 +52,15 @@ defmodule RinhaBackendWeb.ClienteControllerTest do
              },
              "ultimas_transacoes" => [
                %{
-                 "valor" => 50,
-                 "tipo" => "d",
-                 "descricao" => "Débito",
-                 "realizado_em" => _
-               },
-               %{
                  "valor" => 100,
                  "tipo" => "c",
                  "descricao" => "Crédito",
+                 "realizado_em" => _
+               },
+               %{
+                 "valor" => 50,
+                 "tipo" => "d",
+                 "descricao" => "Débito",
                  "realizado_em" => _
                }
              ]

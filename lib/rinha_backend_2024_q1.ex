@@ -44,25 +44,20 @@ defmodule RinhaBackend do
       cliente ->
         novo_saldo = define_novo_saldo(cliente, attrs)
 
-        Ecto.Multi.new()
-        |> Ecto.Multi.update(:cliente, Cliente.changeset(cliente, %{saldo: novo_saldo}))
-        |> Ecto.Multi.insert(:transacao, Transacao.changeset(%Transacao{}, attrs))
-        |> Repo.transaction()
-        |> case do
-          {:ok, _} ->
-            :ok
+        if novo_saldo < -cliente.limite do
+          {:error, :transacao_invalida}
+        else
+          Ecto.Multi.new()
+          |> Ecto.Multi.update(:cliente, Cliente.changeset(cliente, %{saldo: novo_saldo}))
+          |> Ecto.Multi.insert(:transacao, Transacao.changeset(%Transacao{}, attrs))
+          |> Repo.transaction()
+          |> case do
+            {:ok, _} ->
+              :ok
 
-          {:error, :cliente,
-           %{errors: [saldo: {_, [constraint: _, constraint_name: "saldo_maior_que_o_limite"]}]},
-           %{}} ->
-            {:error, :saldo_insuficiente}
-
-          {:error, :transacao,
-           %{errors: [valor: {_, [validation: :number, kind: :greater_than, number: 0]}]}, %{}} ->
-            {:error, :valor_invalido}
-
-          {:error, changeset} ->
-            {:error, changeset}
+            _error ->
+              {:error, :transacao_invalida}
+          end
         end
     end
   end

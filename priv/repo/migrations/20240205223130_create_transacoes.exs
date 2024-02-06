@@ -12,7 +12,7 @@ defmodule RinhaBackend.Repo.Migrations.CreateTransacoes do
       add :descricao, :string, null: false
       add :cliente_id, references(:clientes, on_delete: :delete_all), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime_usec)
     end
 
     create index(:transacoes, [:cliente_id])
