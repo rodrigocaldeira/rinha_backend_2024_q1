@@ -8,12 +8,8 @@ defmodule RinhaBackend.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
-      RinhaBackendWeb.Telemetry,
       # Start the Ecto repository
       RinhaBackend.Repo,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: RinhaBackend.PubSub},
       # Start the Endpoint (http/https)
       RinhaBackendWeb.Endpoint
       # Start a worker by calling: RinhaBackend.Worker.start_link(arg)
