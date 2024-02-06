@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+cd -P -- "$(dirname -- "$0")"
+exec ./rinha_backend_2024_q1 eval RinhaBackend.Release.migrate
