@@ -20,6 +20,11 @@ services:
         limits:
           cpus: "0.6"
           memory: "200MB"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 1000000
+        hard: 1000000
 
   api02:
     <<: *api
@@ -46,8 +51,13 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.17"
+          cpus: "0.1"
           memory: "50MB"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 1000000
+        hard: 1000000
 
 
   db:
@@ -62,8 +72,9 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.13"
+          cpus: "0.20"
           memory: "100MB"
+    command: postgres -c max_connections=450
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d rinha_backend" ]
       interval: 3s

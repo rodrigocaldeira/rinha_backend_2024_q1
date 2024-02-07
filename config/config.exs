@@ -17,6 +17,19 @@ config :rinha_backend_2024_q1, RinhaBackendWeb.Endpoint,
   render_errors: [
     formats: [json: RinhaBackendWeb.ErrorJSON],
     layout: false
+  ],
+  http: [
+    port: {:system, "PORT"},
+    compress: true,
+    protocol_options: [
+      idle_timeout: 60_000,
+      max_keepalive: 100_000,
+    ],
+    transport_options: [
+      max_connections: 100_000,
+      num_acceptors: 100,
+      connection_type: :supervisor
+    ]
   ]
 
 # Configures Elixir's Logger
