@@ -78,19 +78,10 @@ RUN chown nobody /app
 
 # set runner ENV
 ENV MIX_ENV="prod"
-ENV SECRET_KEY_BASE="vnbnYw4N0WzDuQieEpv0tzaZCAGfNOzk/M+naf87PNX3yd2fM4COTizm3yVwwHh7"
-ENV DATABASE_URL="postgres://postgres:postgres@postgres:5432/rinha_backend"
-ENV POOL_SIZE=10
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/rinha_backend_2024_q1 ./
 
 USER nobody
 
-# If using an environment that doesn't automatically reap zombie processes, it is
-# advised to add an init process such as tini via `apt-get install`
-# above and adding an entrypoint. See https://github.com/krallin/tini for details
-# ENTRYPOINT ["/tini", "--"]
-
-# CMD ["/app/bin/server"]
-CMD ["sh", "-c", "/app/bin/migrate && /app/bin/server"]
+CMD ["/app/bin/server"]

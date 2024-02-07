@@ -7,9 +7,14 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "4001:4000"
+      - "4000:4000"
+    environment:
+      - PHX_HOST=api01
+      - SECRET_KEY_BASE="vnbnYw4N0WzDuQieEpv0tzaZCAGfNOzk/M+naf87PNX3yd2fM4COTizm3yVwwHh7"
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/rinha_backend
     depends_on:
-      - postgres
+      db:
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -20,38 +25,35 @@ services:
     <<: *api
     hostname: api02
     ports:
-      - "4002:4000"
-    depends_on:
-      - api01
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - PHX_HOST=api02
+      - SECRET_KEY_BASE="yd5mZeRqTh7KqzvBGTPIaN9yuIRoeQuqeeQCJKe8pqAXakf1p4zugNYfUGjp32C+"
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/rinha_backend
 
   nginx:
     image: nginx:latest
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - api01
       - api02
     ports:
       - "9999:9999"
-    ulimits:
-      nproc: 1000000
-      nofile:
-        soft: 1000000
-        hard: 1000000
     deploy:
       resources:
         limits:
           cpus: "0.1"
           memory: "30MB"
 
-  postgres:
+  db:
     image: postgres:latest
-    hostname: postgres
+    hostname: db
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=rinha_backend
-    command: postgres -c max_connections=450 -c checkpoint_timeout=600 -c max_wal_size=4096
     ports:
       - "5432:5432"
     deploy:
@@ -59,6 +61,11 @@ services:
         limits:
           cpus: "0.40"
           memory: "120MB"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d rinha" ]
+      interval: 3s
+      timeout: 1s
+      retries: 2
 
 networks:
   default:
