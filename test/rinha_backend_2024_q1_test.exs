@@ -24,7 +24,7 @@ defmodule RinhaBackendTest do
     end
 
     test "Insere uma transação de crédito", %{cliente: cliente} do
-      assert :ok =
+      assert {:ok, cliente} =
                RinhaBackend.registra_transacao(%{
                  valor: 100,
                  tipo: :c,
@@ -32,7 +32,6 @@ defmodule RinhaBackendTest do
                  cliente_id: cliente.id
                })
 
-      {:ok, cliente} = RinhaBackend.busca_cliente(cliente.id)
       assert cliente.saldo == 100
 
       [transacao] = cliente.ultimas_transacoes
@@ -41,7 +40,7 @@ defmodule RinhaBackendTest do
     end
 
     test "Insere uma transação de débito", %{cliente: cliente} do
-      assert :ok =
+      assert {:ok, cliente} =
                RinhaBackend.registra_transacao(%{
                  valor: 100,
                  tipo: :d,
@@ -49,7 +48,6 @@ defmodule RinhaBackendTest do
                  cliente_id: cliente.id
                })
 
-      {:ok, cliente} = RinhaBackend.busca_cliente(cliente.id)
       assert cliente.saldo == -100
 
       [transacao] = cliente.ultimas_transacoes

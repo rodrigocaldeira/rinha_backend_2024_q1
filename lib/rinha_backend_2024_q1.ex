@@ -14,12 +14,7 @@ defmodule RinhaBackend do
   import Ecto.Query
 
   def busca_cliente(cliente_id) do
-    query_transacoes =
-      from(t in Transacao,
-        where: t.cliente_id == ^cliente_id,
-        order_by: [desc: t.inserted_at],
-        limit: 10
-      )
+    query_transacoes = monta_query_transacoes(cliente_id)
 
     query_cliente =
       from(c in Cliente,
@@ -52,8 +47,9 @@ defmodule RinhaBackend do
           |> Ecto.Multi.insert(:transacao, Transacao.changeset(%Transacao{}, attrs))
           |> Repo.transaction()
           |> case do
-            {:ok, _} ->
-              :ok
+            {:ok, %{cliente: cliente}} ->
+              query_transacoes = monta_query_transacoes(cliente.id)
+              {:ok, Repo.preload(cliente, [ultimas_transacoes: query_transacoes])}
 
             _error ->
               {:error, :transacao_invalida}
@@ -67,5 +63,13 @@ defmodule RinhaBackend do
       :c -> cliente.saldo + attrs.valor
       :d -> cliente.saldo - attrs.valor
     end
+  end
+
+  def monta_query_transacoes(cliente_id) do
+    from(t in Transacao,
+      where: t.cliente_id == ^cliente_id,
+      order_by: [desc: t.inserted_at],
+      limit: 10
+    )
   end
 end

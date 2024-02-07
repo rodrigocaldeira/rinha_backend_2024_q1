@@ -27,18 +27,8 @@ defmodule RinhaBackendWeb.ClienteController do
       cliente_id: id
     })
     |> case do
-      :ok ->
-        RinhaBackend.busca_cliente(id)
-        |> case do
-          {:ok, cliente} ->
-            render(conn, :transacao, cliente: cliente)
-
-          {:error, :not_found} ->
-            conn
-            |> put_status(:not_found)
-            |> put_view(RinhaBackendWeb.ErrorJSON)
-            |> render("404.json")
-        end
+      {:ok, cliente} ->
+        render(conn, :transacao, cliente: cliente)
 
       {:error, :transacao_invalida} ->
         conn
