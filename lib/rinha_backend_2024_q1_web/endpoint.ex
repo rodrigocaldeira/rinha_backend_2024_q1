@@ -7,8 +7,6 @@ defmodule RinhaBackendWeb.Endpoint do
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :rinha_backend_2024_q1
   end
 
-  plug Plug.RequestId
-
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],

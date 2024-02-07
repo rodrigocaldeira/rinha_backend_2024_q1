@@ -30,14 +30,14 @@ defmodule RinhaBackendWeb.ClienteControllerTest do
   test "GET /clientes/:id/extrato com algumas transações", %{conn: conn, cliente: cliente} do
     RinhaBackend.registra_transacao(%{
       valor: 50,
-      tipo: :d,
+      tipo: "d",
       descricao: "Débito",
       cliente_id: cliente.id
     })
 
     RinhaBackend.registra_transacao(%{
       valor: 100,
-      tipo: :c,
+      tipo: "c",
       descricao: "Crédito",
       cliente_id: cliente.id
     })
@@ -55,13 +55,13 @@ defmodule RinhaBackendWeb.ClienteControllerTest do
                  "valor" => 100,
                  "tipo" => "c",
                  "descricao" => "Crédito",
-                 "realizado_em" => _
+                 "realizada_em" => _
                },
                %{
                  "valor" => 50,
                  "tipo" => "d",
                  "descricao" => "Débito",
-                 "realizado_em" => _
+                 "realizada_em" => _
                }
              ]
            } = json_response(conn, 200)

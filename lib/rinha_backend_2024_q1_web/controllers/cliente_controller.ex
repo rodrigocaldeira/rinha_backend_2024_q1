@@ -18,8 +18,6 @@ defmodule RinhaBackendWeb.ClienteController do
   end
 
   def transacao(conn, %{"id" => id, "valor" => valor, "tipo" => tipo, "descricao" => descricao}) do
-    tipo = String.to_existing_atom(tipo)
-
     RinhaBackend.registra_transacao(%{
       valor: valor,
       tipo: tipo,

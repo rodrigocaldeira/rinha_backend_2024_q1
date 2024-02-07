@@ -9,21 +9,9 @@ defmodule RinhaBackend do
 
   alias RinhaBackend.Cliente
   alias RinhaBackend.Repo
-  alias RinhaBackend.Transacao
-
-  import Ecto.Query
 
   def busca_cliente(cliente_id) do
-    query_transacoes = monta_query_transacoes(cliente_id)
-
-    query_cliente =
-      from(c in Cliente,
-        where: c.id == ^cliente_id,
-        preload: [ultimas_transacoes: ^query_transacoes]
-      )
-
-    Repo.all(query_cliente)
-    |> Enum.at(0)
+    Repo.get(Cliente, cliente_id)
     |> case do
       nil -> {:error, :not_found}
       cliente -> {:ok, cliente}
@@ -42,14 +30,16 @@ defmodule RinhaBackend do
         if novo_saldo < -cliente.limite do
           {:error, :transacao_invalida}
         else
-          Ecto.Multi.new()
-          |> Ecto.Multi.update(:cliente, Cliente.changeset(cliente, %{saldo: novo_saldo}))
-          |> Ecto.Multi.insert(:transacao, Transacao.changeset(%Transacao{}, attrs))
-          |> Repo.transaction()
+          update_attrs = %{
+            saldo: novo_saldo,
+            ultimas_transacoes: insere_transacao(cliente.ultimas_transacoes, attrs)
+          }
+
+          Cliente.changeset(cliente, update_attrs)
+          |> Repo.update()
           |> case do
-            {:ok, %{cliente: cliente}} ->
-              query_transacoes = monta_query_transacoes(cliente.id)
-              {:ok, Repo.preload(cliente, [ultimas_transacoes: query_transacoes])}
+            {:ok, cliente} ->
+              {:ok, cliente}
 
             _error ->
               {:error, :transacao_invalida}
@@ -60,16 +50,20 @@ defmodule RinhaBackend do
 
   defp define_novo_saldo(cliente, attrs) do
     case attrs.tipo do
-      :c -> cliente.saldo + attrs.valor
-      :d -> cliente.saldo - attrs.valor
+      "c" -> cliente.saldo + attrs.valor
+      "d" -> cliente.saldo - attrs.valor
     end
   end
 
-  def monta_query_transacoes(cliente_id) do
-    from(t in Transacao,
-      where: t.cliente_id == ^cliente_id,
-      order_by: [desc: t.inserted_at],
-      limit: 10
-    )
+  defp insere_transacao(ultimas_transacoes, attrs) do
+    nova_transacao = %{
+      valor: attrs.valor,
+      tipo: attrs.tipo,
+      descricao: attrs.descricao,
+      realizada_em: DateTime.utc_now()
+    }
+
+    [nova_transacao | ultimas_transacoes]
+    |> Enum.take(10)
   end
 end

@@ -47,7 +47,7 @@ services:
       resources:
         limits:
           cpus: "0.17"
-          memory: "20MB"
+          memory: "50MB"
 
 
   db:
@@ -63,12 +63,12 @@ services:
       resources:
         limits:
           cpus: "0.13"
-          memory: "130MB"
+          memory: "100MB"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d rinha_backend" ]
       interval: 3s
       timeout: 1s
-      retries: 2
+      retries: 5
 
 networks:
   default:

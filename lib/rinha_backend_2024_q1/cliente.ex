@@ -6,7 +6,7 @@ defmodule RinhaBackend.Cliente do
     field :nome, :string
     field :limite, :integer
     field :saldo, :integer, default: 0
-    has_many :ultimas_transacoes, RinhaBackend.Transacao
+    field :ultimas_transacoes, {:array, :map}, default: []
 
     timestamps()
   end
@@ -14,12 +14,7 @@ defmodule RinhaBackend.Cliente do
   @doc false
   def changeset(cliente, attrs) do
     cliente
-    |> cast(attrs, [:nome, :limite, :saldo])
+    |> cast(attrs, [:nome, :limite, :saldo, :ultimas_transacoes])
     |> validate_required([:nome, :limite, :saldo])
-    |> check_constraint(:saldo,
-      name: :saldo_maior_que_o_limite,
-      message: "saldo deve ser maior ou igual ao limite * -1",
-      check: "saldo >= limite * -1"
-    )
   end
 end

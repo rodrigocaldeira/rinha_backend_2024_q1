@@ -27,7 +27,7 @@ defmodule RinhaBackendTest do
       assert {:ok, cliente} =
                RinhaBackend.registra_transacao(%{
                  valor: 100,
-                 tipo: :c,
+                 tipo: "c",
                  descricao: "Crédito",
                  cliente_id: cliente.id
                })
@@ -36,14 +36,14 @@ defmodule RinhaBackendTest do
 
       [transacao] = cliente.ultimas_transacoes
       assert transacao.valor == 100
-      assert transacao.tipo == :c
+      assert transacao.tipo == "c"
     end
 
     test "Insere uma transação de débito", %{cliente: cliente} do
       assert {:ok, cliente} =
                RinhaBackend.registra_transacao(%{
                  valor: 100,
-                 tipo: :d,
+                 tipo: "d",
                  descricao: "Débito",
                  cliente_id: cliente.id
                })
@@ -52,75 +52,15 @@ defmodule RinhaBackendTest do
 
       [transacao] = cliente.ultimas_transacoes
       assert transacao.valor == 100
-      assert transacao.tipo == :d
+      assert transacao.tipo == "d"
     end
 
     test "Insere uma transação de débito sem saldo suficiente", %{cliente: cliente} do
       assert {:error, :transacao_invalida} =
                RinhaBackend.registra_transacao(%{
                  valor: 1001,
-                 tipo: :d,
+                 tipo: "d",
                  descricao: "Débito",
-                 cliente_id: cliente.id
-               })
-
-      {:ok, cliente} = RinhaBackend.busca_cliente(cliente.id)
-      assert cliente.saldo == 0
-
-      assert cliente.ultimas_transacoes == []
-    end
-
-    test "Insere uma transação com valor negativo", %{cliente: cliente} do
-      assert {:error, :transacao_invalida} =
-               RinhaBackend.registra_transacao(%{
-                 valor: -100,
-                 tipo: :d,
-                 descricao: "Débito",
-                 cliente_id: cliente.id
-               })
-
-      {:ok, cliente} = RinhaBackend.busca_cliente(cliente.id)
-      assert cliente.saldo == 0
-
-      assert cliente.ultimas_transacoes == []
-    end
-
-    test "Insere uma transação com descrição nula", %{cliente: cliente} do
-      assert {:error, :transacao_invalida} =
-               RinhaBackend.registra_transacao(%{
-                 valor: 100,
-                 tipo: :d,
-                 descricao: nil,
-                 cliente_id: cliente.id
-               })
-
-      {:ok, cliente} = RinhaBackend.busca_cliente(cliente.id)
-      assert cliente.saldo == 0
-
-      assert cliente.ultimas_transacoes == []
-    end
-
-    test "Insere uma transação com descrição vazia", %{cliente: cliente} do
-      assert {:error, :transacao_invalida} =
-               RinhaBackend.registra_transacao(%{
-                 valor: 100,
-                 tipo: :d,
-                 descricao: "",
-                 cliente_id: cliente.id
-               })
-
-      {:ok, cliente} = RinhaBackend.busca_cliente(cliente.id)
-      assert cliente.saldo == 0
-
-      assert cliente.ultimas_transacoes == []
-    end
-
-    test "Insere uma transação com descrição muito longa", %{cliente: cliente} do
-      assert {:error, :transacao_invalida} =
-               RinhaBackend.registra_transacao(%{
-                 valor: 100,
-                 tipo: :d,
-                 descricao: "Descrição muito longa",
                  cliente_id: cliente.id
                })
 

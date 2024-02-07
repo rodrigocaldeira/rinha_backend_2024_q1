@@ -7,13 +7,14 @@ defmodule RinhaBackend.Repo.Migrations.CreateClientes do
       add :nome, :string, null: false
       add :limite, :integer, null: false
       add :saldo, :integer, null: false, default: 0
+      add :ultimas_transacoes, {:array, :map}, default: []
 
       timestamps()
     end
 
-    create constraint(:clientes, :saldo,
-             name: :saldo_maior_que_o_limite,
-             check: "saldo >= limite * -1"
-           )
+    # create constraint(:clientes, :saldo,
+    #          name: :saldo_maior_que_o_limite,
+    #          check: "saldo >= limite * -1"
+    #        )
   end
 end

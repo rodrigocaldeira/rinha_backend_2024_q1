@@ -23,10 +23,10 @@ defmodule RinhaBackendWeb.ClienteJSON do
 
   defp map_transacao(transacao) do
     %{
-      valor: transacao.valor,
-      tipo: transacao.tipo,
-      descricao: transacao.descricao,
-      realizado_em: transacao.inserted_at
+      valor: transacao["valor"],
+      tipo: transacao["tipo"],
+      descricao: transacao["descricao"],
+      realizada_em: transacao["realizada_em"]
     }
   end
 end
