@@ -1,18 +1,6 @@
-# RinhaBackend
+# Rinha de Backend - Q1 de 2024
 
-To start your Phoenix server:
+## Resultados (Ubuntu WSL)
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+![Captura de tela 2024-02-07 155600](https://github.com/rodrigocaldeira/rinha_backend_2024_q1/assets/2973276/31f2c07f-a0b8-4d96-8040-7d912b050249)
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
