@@ -10,7 +10,6 @@ services:
       - "4000:4000"
     environment:
       - PHX_HOST=api01
-      - POOL_SIZE=20
       - SECRET_KEY_BASE="vnbnYw4N0WzDuQieEpv0tzaZCAGfNOzk/M+naf87PNX3yd2fM4COTizm3yVwwHh7"
       - DATABASE_URL=postgres://postgres:postgres@db:5432/rinha_backend
       - ERL_MAX_PORTS=512
@@ -21,7 +20,7 @@ services:
       resources:
         limits:
           cpus: "0.3"
-          memory: "100MB"
+          memory: "150MB"
 
   api02:
     <<: *api
@@ -30,7 +29,6 @@ services:
       - "4001:4001"
     environment:
       - PORT=4001
-      - POOL_SIZE=20
       - PHX_HOST=api02
       - SECRET_KEY_BASE="yd5mZeRqTh7KqzvBGTPIaN9yuIRoeQuqeeQCJKe8pqAXakf1p4zugNYfUGjp32C+"
       - DATABASE_URL=postgres://postgres:postgres@db:5432/rinha_backend
@@ -64,7 +62,7 @@ services:
       resources:
         limits:
           cpus: "0.80"
-          memory: "300MB"
+          memory: "200MB"
     command: postgres -c max_connections=100 -c effective_io_concurrency=100
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
