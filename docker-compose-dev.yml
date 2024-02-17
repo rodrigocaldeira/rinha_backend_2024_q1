@@ -28,8 +28,6 @@ services:
     hostname: api02
     ports:
       - "4001:4001"
-    depends_on:
-      - api01
     environment:
       - PORT=4001
       - POOL_SIZE=20
@@ -37,6 +35,7 @@ services:
       - SECRET_KEY_BASE="yd5mZeRqTh7KqzvBGTPIaN9yuIRoeQuqeeQCJKe8pqAXakf1p4zugNYfUGjp32C+"
       - DATABASE_URL=postgres://postgres:postgres@db:5432/rinha_backend
       - ERL_MAX_PORTS=512
+
   nginx:
     image: nginx:latest
     volumes:
@@ -66,7 +65,9 @@ services:
         limits:
           cpus: "0.80"
           memory: "300MB"
-    command: postgres -c max_connections=40 -c effective_io_concurrency=40
+    command: postgres -c max_connections=100 -c effective_io_concurrency=100
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d rinha_backend" ]
       interval: 3s
