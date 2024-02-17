@@ -16,5 +16,6 @@ defmodule RinhaBackend.Cliente do
     cliente
     |> cast(attrs, [:nome, :limite, :saldo, :ultimas_transacoes])
     |> validate_required([:nome, :limite, :saldo])
+    |> check_constraint(:saldo, name: :saldo_maior_que_o_limite)
   end
 end

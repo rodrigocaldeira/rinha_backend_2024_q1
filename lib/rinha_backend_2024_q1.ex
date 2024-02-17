@@ -10,6 +10,8 @@ defmodule RinhaBackend do
   alias RinhaBackend.Cliente
   alias RinhaBackend.Repo
 
+  import Ecto.Query
+
   def busca_cliente(cliente_id) do
     Repo.get(Cliente, cliente_id)
     |> case do
@@ -19,39 +21,44 @@ defmodule RinhaBackend do
   end
 
   def registra_transacao(attrs) do
-    Repo.get(Cliente, attrs.cliente_id)
-    |> case do
-      nil ->
-        {:error, :not_found}
+    if Repo.exists?(Cliente, id: attrs.cliente_id) do
+      Repo.transaction(fn ->
+        cliente = 
+          Cliente
+          |> where([c], c.id == ^attrs.cliente_id)
+          |> lock("FOR UPDATE")
+          |> Repo.one()
 
-      cliente ->
-        novo_saldo = define_novo_saldo(cliente, attrs)
+        valor = define_valor(attrs)
+        ultimas_transacoes = insere_transacao(cliente.ultimas_transacoes, attrs)
 
-        if novo_saldo < -cliente.limite do
-          {:error, :transacao_invalida}
-        else
-          update_attrs = %{
-            saldo: novo_saldo,
-            ultimas_transacoes: insere_transacao(cliente.ultimas_transacoes, attrs)
-          }
+        changeset = Cliente.changeset(cliente, %{
+          nome: cliente.nome,
+          limite: cliente.limite,
+          saldo: cliente.saldo + valor,
+          ultimas_transacoes: ultimas_transacoes
+        })
 
-          Cliente.changeset(cliente, update_attrs)
-          |> Repo.update()
-          |> case do
-            {:ok, cliente} ->
-              {:ok, cliente}
-
-            _error ->
-              {:error, :transacao_invalida}
-          end
+        Repo.update(changeset)
+        |> case do
+          {:ok, cliente} -> cliente
+          _error -> {:error, :transacao_invalida}
         end
+      end)
+      |> case do
+        {:ok, cliente} -> {:ok, cliente}
+        _error -> {:error, :transacao_invalida}
+      end
+
+    else
+      {:error, :not_found}
     end
   end
 
-  defp define_novo_saldo(cliente, attrs) do
+  defp define_valor(attrs) do
     case attrs.tipo do
-      "c" -> cliente.saldo + attrs.valor
-      "d" -> cliente.saldo - attrs.valor
+      "c" -> attrs.valor
+      "d" -> -attrs.valor
     end
   end
 

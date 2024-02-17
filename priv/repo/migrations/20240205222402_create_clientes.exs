@@ -12,9 +12,9 @@ defmodule RinhaBackend.Repo.Migrations.CreateClientes do
       timestamps()
     end
 
-    # create constraint(:clientes, :saldo,
-    #          name: :saldo_maior_que_o_limite,
-    #          check: "saldo >= limite * -1"
-    #        )
+    create constraint(:clientes, :saldo,
+             name: :saldo_maior_que_o_limite,
+             check: "saldo >= limite * -1"
+           )
   end
 end

@@ -23,7 +23,7 @@ defmodule RinhaBackend.Repo.Migrations.SeedsClientesTable do
     RinhaBackend.Repo.insert!(%RinhaBackend.Cliente{
       id: 4,
       nome: "padaria joia de cocaia",
-      limite: 1_000_000 * 100
+      limite: 100_000 * 100
     })
 
     RinhaBackend.Repo.insert!(%RinhaBackend.Cliente{id: 5, nome: "kid mais", limite: 5000 * 100})
