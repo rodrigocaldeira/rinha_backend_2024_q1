@@ -34,6 +34,12 @@ defmodule RinhaBackendWeb.ClienteController do
         |> put_view(RinhaBackendWeb.ErrorJSON)
         |> render("422.json")
 
+      {:error, :not_found} ->
+        conn
+        |> put_status(:not_found)
+        |> put_view(RinhaBackendWeb.ErrorJSON)
+        |> render("404.json")
+
       _error ->
         conn
         |> put_status(:internal_server_error)

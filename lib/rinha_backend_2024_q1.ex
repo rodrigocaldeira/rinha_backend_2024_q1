@@ -21,37 +21,39 @@ defmodule RinhaBackend do
   end
 
   def registra_transacao(attrs) do
-    if Repo.exists?(Cliente, id: attrs.cliente_id) do
-      Repo.transaction(fn ->
-        cliente = 
-          Cliente
-          |> where([c], c.id == ^attrs.cliente_id)
-          |> lock("FOR UPDATE")
-          |> Repo.one()
-
-        valor = define_valor(attrs)
-        ultimas_transacoes = insere_transacao(cliente.ultimas_transacoes, attrs)
-
-        changeset = Cliente.changeset(cliente, %{
-          nome: cliente.nome,
-          limite: cliente.limite,
-          saldo: cliente.saldo + valor,
-          ultimas_transacoes: ultimas_transacoes
-        })
-
-        Repo.update(changeset)
-        |> case do
-          {:ok, cliente} -> cliente
-          _error -> {:error, :transacao_invalida}
-        end
-      end)
+    Repo.transaction(fn ->
+      Cliente
+      |> where([c], c.id == ^attrs.cliente_id)
+      |> lock("FOR UPDATE")
+      |> Repo.one()
       |> case do
-        {:ok, cliente} -> {:ok, cliente}
-        _error -> {:error, :transacao_invalida}
-      end
+        nil ->
+          Repo.rollback(:not_found)
+          {:error, :not_found}
 
-    else
-      {:error, :not_found}
+        cliente ->
+          valor = define_valor(attrs)
+          ultimas_transacoes = insere_transacao(cliente.ultimas_transacoes, attrs)
+
+          changeset =
+            Cliente.changeset(cliente, %{
+              nome: cliente.nome,
+              limite: cliente.limite,
+              saldo: cliente.saldo + valor,
+              ultimas_transacoes: ultimas_transacoes
+            })
+
+          Repo.update(changeset)
+          |> case do
+            {:ok, cliente} -> cliente
+            _error -> {:error, :transacao_invalida}
+          end
+      end
+    end)
+    |> case do
+      {:ok, cliente} -> {:ok, cliente}
+      {:error, :not_found} -> {:error, :not_found}
+      _error -> {:error, :transacao_invalida}
     end
   end
 

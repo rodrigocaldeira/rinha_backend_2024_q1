@@ -80,4 +80,15 @@ defmodule RinhaBackendWeb.ClienteControllerTest do
              "limite" => 1000
            } = json_response(conn, 200)
   end
+
+  test "POST /clientes/:id/transacoes com cliente não encontrado", %{conn: conn} do
+    conn =
+      post(conn, ~p"/clientes/0/transacoes", %{
+        "valor" => 100,
+        "tipo" => "c",
+        "descricao" => "Crédito"
+      })
+
+    assert %{"errors" => %{"detail" => "Not Found"}} = json_response(conn, 404)
+  end
 end

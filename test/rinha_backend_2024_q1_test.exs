@@ -73,12 +73,14 @@ defmodule RinhaBackendTest do
     test "Várias transações acontecendo em paralelo", %{cliente: cliente} do
       1..25
       |> Enum.map(fn _ ->
-        Task.async(fn -> RinhaBackend.registra_transacao(%{
-          valor: 1,
-          tipo: "d",
-          descricao: "Débito",
-          cliente_id: cliente.id
-        }) end)
+        Task.async(fn ->
+          RinhaBackend.registra_transacao(%{
+            valor: 1,
+            tipo: "d",
+            descricao: "Débito",
+            cliente_id: cliente.id
+          })
+        end)
       end)
       |> Enum.map(&Task.await/1)
 
@@ -87,12 +89,14 @@ defmodule RinhaBackendTest do
 
       1..25
       |> Enum.map(fn _ ->
-        Task.async(fn -> RinhaBackend.registra_transacao(%{
-          valor: 1,
-          tipo: "c",
-          descricao: "Crédito",
-          cliente_id: cliente.id
-        }) end)
+        Task.async(fn ->
+          RinhaBackend.registra_transacao(%{
+            valor: 1,
+            tipo: "c",
+            descricao: "Crédito",
+            cliente_id: cliente.id
+          })
+        end)
       end)
       |> Enum.map(&Task.await/1)
 

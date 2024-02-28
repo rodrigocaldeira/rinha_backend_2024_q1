@@ -23,7 +23,7 @@ config :rinha_backend_2024_q1, RinhaBackendWeb.Endpoint,
     compress: true,
     protocol_options: [
       idle_timeout: 60_000,
-      max_keepalive: 100_000,
+      max_keepalive: 100_000
     ],
     transport_options: [
       max_connections: 100_000,
